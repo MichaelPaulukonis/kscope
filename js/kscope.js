@@ -14,11 +14,14 @@ function Tile (imageX, imageY, componentX, componentY, width, height, arrayX, ar
     this.arrayY = arrayY;
 }
 
-var imageSliceData = Array();
+var imageSliceData = [];
 
-//var imageList = ['images/free_nature_wallpaper_fallcreek1.jpg', 'images/Ozarks-5.jpg', 'images/versailles2.jpg', 'images/Tartan_Plaid_Red_Texture.jpg', 'images/crane1.jpg', 'images/crane2.jpg', 'images/crane3.jpg', 'images/crane7.jpg'];;
-
-var imageList = ['images/crane1.jpg', 'images/crane2.jpg', 'images/crane3.jpg', 'images/crane7.jpg', 'images/crane8.jpg'];
+var imageList = [
+    'images/A10470.jpg', 'images/A15353.jpg', 'images/polychrome.text.20190306.203330.png', 
+'images/polychrome.text.20190306.202321.png', 'images/polychrome.text.20190306.203736.png',
+'images/z1.jpg', 'images/z2.jpg', 'images/zardoz.gun.jpg',
+ 'images/Zardoz_704.jpg'
+];
 
 var imageListIndex = 0;
 
@@ -27,11 +30,11 @@ var baseImageLoaded = false;
 
 var kWidth = -1;
 var kHeight = -1;
-var displaySquareSize = 160;
+var displaySquareSize = 400;
 var widthSquares = -1;
 var heightSquares = -1;
 
-var amountToShiftImage = 2;
+const IMAGE_SHIFT_AMOUNT = 2;
 var moveDirectionX = 'positive';
 var moveDirectionY = 'positive';
 var displayPaused = false;
@@ -75,18 +78,18 @@ function draw() {
         
         if (xOrY == 0) {
             if (moveDirectionX == 'positive') {
-                tile.imageX = tile.imageX + amountToShiftImage;
+                tile.imageX = tile.imageX + IMAGE_SHIFT_AMOUNT;
             }
             else {
-                tile.imageX = tile.imageX - amountToShiftImage;
+                tile.imageX = tile.imageX - IMAGE_SHIFT_AMOUNT;
             }
         }
         else {
             if (moveDirectionY == 'positive') {
-                tile.imageY = tile.imageY + amountToShiftImage;
+                tile.imageY = tile.imageY + IMAGE_SHIFT_AMOUNT;
             }
             else {
-                tile.imageY = tile.imageY - amountToShiftImage;
+                tile.imageY = tile.imageY - IMAGE_SHIFT_AMOUNT;
             }
         }
         
@@ -100,15 +103,25 @@ function draw() {
             moveDirectionY = 'positive';
         }
         
-        if (tile.imageX > baseImage.width - tile.width - 1) {
-            tile.imageX = baseImage.width - tile.width - 1;  
+        if (tile.imageX > baseImage.width - tile.width/2- 1) {
+            tile.imageX = baseImage.width - tile.width/2 - 1;  
             moveDirectionX = 'negative';
         }
-        if (tile.imageY > baseImage.height - tile.height - 1) {
-            tile.imageY = baseImage.height - tile.height - 1; 
+        if (tile.imageY > baseImage.height - tile.height/2 - 1) {
+            tile.imageY = baseImage.height - tile.height/2 - 1; 
             moveDirectionY = 'negative'; 
         }
         
+        if (tile.imageX < 0) {
+            tile.imageX = 0;
+            moveDirectionX = 'positive';
+        }
+        
+        if (tile.imageY < 0) {
+            tile.imageY = 0;
+            moveDirectionY = 'positive';
+        }
+
         render();
     }
 }
@@ -118,9 +131,6 @@ function draw() {
     -------------------------------------------------------------------- */
 
 function render() {
-    
-    var d = new Date();
-    var startTime = d.getTime(); 
     
     baseImageLoaded = true;
     
@@ -139,14 +149,13 @@ function render() {
 
         image(resultImage, tile.componentX, tile.componentY);
     }
-    
-    var d = new Date();
-    var stopTime = d.getTime(); 
 }
 
 function turnImageUpsideDown(inImage) {
     
     var resultImage = createImage(inImage.width, inImage.height);
+
+    if (!inImage.loadPixels) debugger
 
     inImage.loadPixels();
     resultImage.loadPixels();
@@ -292,6 +301,8 @@ function keyPressed() {
         imageListIndex = 0;
     }
     
+    console.log(imageList[imageListIndex])
+
     baseImageLoaded = false;
     baseImage = loadImage(imageList[imageListIndex], render);
     
